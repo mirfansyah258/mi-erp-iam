@@ -12,7 +12,7 @@ import com.mi.iam.models.entities.Clients;
 
 import jakarta.transaction.Transactional;
 
-public interface ClientsRepo extends JpaRepository<Clients, String> {
+public interface ClientsRepository extends JpaRepository<Clients, String> {
   @Query("SELECT c FROM Clients c " +
          "WHERE c.isActive = 1" +
          "AND (LOWER(c.clientId) LIKE %:searchTerm% " +

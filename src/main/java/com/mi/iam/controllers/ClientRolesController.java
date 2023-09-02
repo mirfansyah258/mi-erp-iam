@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,20 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mi.iam.helpers.PaginationHelper;
 import com.mi.iam.helpers.ResponseHandler;
 import com.mi.iam.models.dto.MyPagination;
-import com.mi.iam.models.entities.Clients;
-import com.mi.iam.services.ClientsService;
+import com.mi.iam.models.entities.ClientRoles;
+import com.mi.iam.services.ClientRolesService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/clients")
-public class ClientsController {
+@RequestMapping("/client-roles")
+public class ClientRolesController {
   @Autowired
-  private ClientsService clientsService;
+  private ClientRolesService clientRolesService;
 
   @PostMapping({"", "/"})
-  public ResponseEntity<Object> create(@RequestBody Clients client) {
-    Clients cl = clientsService.insert(client);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "Create client data success", cl);
+  public ResponseEntity<Object> create(@RequestBody ClientRoles role) {
+    ClientRoles cl = clientRolesService.insert(role);
+    return ResponseHandler.generateResponse(HttpStatus.OK, "Create client role data success", cl);
   }
 
   @GetMapping({"", "/"})
@@ -40,26 +39,20 @@ public class ClientsController {
     @RequestParam(required = false) String sortBy, // Custom sorting parameter
     Pageable pageable
   ) {
-    MyPagination<Clients> cl = clientsService.getAll(searchTerm, new PaginationHelper().PaginationController(sortBy, pageable));
-    return ResponseHandler.generateResponse(HttpStatus.OK, "GetAll client data success", cl);
+    MyPagination<ClientRoles> cl = clientRolesService.getAll(searchTerm, new PaginationHelper().PaginationController(sortBy, pageable));
+    return ResponseHandler.generateResponse(HttpStatus.OK, "GetAll client role data success", cl);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<Object> getById(@PathVariable("id") String id) {
-    Clients cl = clientsService.getById(id);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "GetById client data success", cl);
+    ClientRoles cl = clientRolesService.getById(id);
+    return ResponseHandler.generateResponse(HttpStatus.OK, "GetById client role data success", cl);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody Clients client) {
+  public ResponseEntity<Object> update(@PathVariable("id") String id, @RequestBody ClientRoles client) {
     client.setId(id);
-    Clients cl = clientsService.update(client);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "Update client data success", cl);
-  }
-
-  @PatchMapping("/{id}")
-  public ResponseEntity<Object> disable(@PathVariable("id") String id) {
-    Clients cl = clientsService.disable(id);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "Disable client data success", cl);
+    ClientRoles cl = clientRolesService.update(client);
+    return ResponseHandler.generateResponse(HttpStatus.OK, "Update client role data success", cl);
   }
 }

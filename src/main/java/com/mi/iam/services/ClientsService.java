@@ -1,62 +1,89 @@
 package com.mi.iam.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.mi.iam.exception.ResourceNotFoundException;
 import com.mi.iam.helpers.PaginationHelper;
 import com.mi.iam.models.dto.MyPagination;
 import com.mi.iam.models.entities.Clients;
-import com.mi.iam.models.repositories.ClientsRepo;
+import com.mi.iam.models.repositories.ClientsRepository;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 @Service
 @Transactional
 public class ClientsService {
-  @Autowired
-  private ClientsRepo clientsRepo;
+  private static final Logger logger = LoggerFactory.getLogger(ClientsService.class);
+  private final ClientsRepository clientsRepository;
+  private final LocalValidatorFactoryBean validator;
 
-  public Clients insert(Clients clients) throws Exception {
-    return clientsRepo.save(clients);
+  public ClientsService(ClientsRepository clientsRepository, LocalValidatorFactoryBean validator) {
+    this.clientsRepository = clientsRepository;
+    this.validator = validator;
+  }
+
+  public Clients insert(Clients clients) {
+    Set<ConstraintViolation<Clients>> violations = validator.validate(clients);
+    if (!violations.isEmpty()) {
+      throw new ConstraintViolationException(violations);
+    }
+
+    return clientsRepository.save(clients);
   }
 
   public MyPagination<Clients> getAll(String searchTerm, Pageable pageable) {
-    Page<Clients> cl = clientsRepo.getAllQuery(searchTerm.toLowerCase(), pageable);
+    Page<Clients> cl = clientsRepository.getAllQuery(searchTerm.toLowerCase(), pageable);
 
     return PaginationHelper.PaginationService(cl);
   }
 
   public Clients getById(String id) {
-    return clientsRepo.findByIdAndIsActive(id, 1).orElse(null);
+    Clients client = clientsRepository.findByIdAndIsActive(id, 1).orElse(null);
+    if (client != null) {
+      return client;
+    }
+    throw new ResourceNotFoundException("Client with ID " + id + " not found.");
   }
 
-  public Clients update(Clients clients) throws Exception {
-    Clients client = clientsRepo.findByIdAndIsActive(clients.getId(), 1).orElse(null);
+  public Clients update(Clients clients) {
+    Clients client = clientsRepository.findByIdAndIsActive(clients.getId(), 1).orElse(null);
     if(client != null) {
+      Set<ConstraintViolation<Clients>> violations = validator.validate(clients);
+      if (!violations.isEmpty()) {
+        throw new ConstraintViolationException(violations);
+      }
+
       clients.setCreatedAt(client.getCreatedAt());
-      return clientsRepo.save(clients);
+      return clientsRepository.save(clients);
     }
-    return null;
+    throw new ResourceNotFoundException("Client with ID " + clients.getId() + " not found.");
   }
 
   public Clients disable(String id) {
-    Clients client = clientsRepo.findByIdAndIsActive(id, 1).orElse(null);
+    Clients client = clientsRepository.findByIdAndIsActive(id, 1).orElse(null);
     if (client != null) {
-      clientsRepo.disableClient(id);
+      clientsRepository.disableClient(id);
       client.setIsActive(0);
       return client;
     }
-    return null;
+    throw new ResourceNotFoundException("Client with ID " + id + " not found.");
   }
 
   public Clients delete(String id) {
-    Clients client = clientsRepo.findByIdAndIsActive(id, 1).orElse(null);
+    Clients client = clientsRepository.findByIdAndIsActive(id, 1).orElse(null);
     if (client != null) {
-      clientsRepo.deleteById(id);
+      clientsRepository.deleteById(id);
       return client;
     }
-    return null;
+    throw new ResourceNotFoundException("Client with ID " + id + " not found.");
   }
 }

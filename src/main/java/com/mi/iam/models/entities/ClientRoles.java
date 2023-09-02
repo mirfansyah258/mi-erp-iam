@@ -3,44 +3,46 @@ package com.mi.iam.models.entities;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.List;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "clients")
+@Table(name = "client_roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Clients {
+public class ClientRoles {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   @Column(length = 36, insertable = false, updatable = false, nullable = false)
   private String id;
 
-  @NotBlank
-  @Column(name = "client_id", unique = true, length = 32, nullable = false)
+  @Column(name = "client_id", length = 36, nullable = false)
   private String clientId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "client_id", referencedColumnName = "id", insertable = false, updatable = false)
+  @Fetch(FetchMode.JOIN)
+  private Clients clients;
 
   @NotBlank
   @Column(length = 64, nullable = false)
@@ -49,24 +51,11 @@ public class Clients {
   @Column(length = 128)
   private String description;
 
-  @NotNull
-  @Min(value = 0, message = "is_active must be at least 0")
-  @Max(value = 1, message = "is_active cannot exceed 1")
-  @Column(name = "is_active", length = 1, nullable = false)
-  private Integer isActive;
-
-  @Column(name = "web_origins", length = 128)
-  private String webOrigins;
-
   @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
   private LocalDateTime createdAt;
 
   @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
   private LocalDateTime updatedAt;
-
-  @OneToMany(targetEntity = ClientRoles.class, mappedBy = "clients", orphanRemoval = false, fetch = FetchType.LAZY)
-  @JsonIgnore
-	private List<ClientRoles> roles;
 
   @PrePersist
   protected void onCreate() {

@@ -14,9 +14,9 @@ import com.mi.iam.models.dto.MyPagination;
 import com.mi.iam.models.entities.ClientRoles;
 import com.mi.iam.models.repositories.ClientRolesRepository;
 
-import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 @Service
 @Transactional

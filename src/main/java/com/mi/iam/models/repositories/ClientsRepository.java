@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.mi.iam.models.entities.Clients;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 public interface ClientsRepository extends JpaRepository<Clients, String> {
   @Query("SELECT c FROM Clients c " +

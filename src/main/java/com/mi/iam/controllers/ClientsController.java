@@ -31,7 +31,7 @@ public class ClientsController {
   @PostMapping({"", "/"})
   public ResponseEntity<Object> create(@RequestBody Clients client) {
     Clients cl = clientsService.insert(client);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "Create client data success", cl);
+    return ResponseHandler.generateResponse(HttpStatus.CREATED, "Create client data success", cl);
   }
 
   @GetMapping({"", "/"})

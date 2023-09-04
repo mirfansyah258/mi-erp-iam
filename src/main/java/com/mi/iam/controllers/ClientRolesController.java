@@ -30,7 +30,7 @@ public class ClientRolesController {
   @PostMapping({"", "/"})
   public ResponseEntity<Object> create(@RequestBody ClientRoles role) {
     ClientRoles cl = clientRolesService.insert(role);
-    return ResponseHandler.generateResponse(HttpStatus.OK, "Create client role data success", cl);
+    return ResponseHandler.generateResponse(HttpStatus.CREATED, "Create client role data success", cl);
   }
 
   @GetMapping({"", "/"})

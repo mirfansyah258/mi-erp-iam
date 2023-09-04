@@ -1,19 +1,21 @@
 package com.mi.iam.helpers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.mi.iam.models.dto.Response;
+
 public class ResponseHandler {
   public static ResponseEntity<Object> generateResponse(HttpStatus code, String message, Object responseObj) {
-    Map<String, Object> map = new HashMap<String, Object>();
+    Response res = new Response();
+    if(code.value() >= 400) {
+      res.setError(responseObj);
+    } else {
+      res.setData(responseObj);
+    }
+    res.setMessage(message);
+    res.setVersion("0.0.1");
 
-    map.put((code.value() >= 400) ? "error" : "data", responseObj);
-    map.put("message", message);
-    map.put("version", "0.0.1");
-
-    return new ResponseEntity<Object>(map, code);
+    return new ResponseEntity<Object>(res, code);
   }
 }

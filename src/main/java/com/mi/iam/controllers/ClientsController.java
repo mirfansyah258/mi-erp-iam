@@ -1,6 +1,9 @@
 package com.mi.iam.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,7 @@ public class ClientsController {
   private ClientsService clientsService;
 
   @PostMapping({"", "/"})
-  public ResponseEntity<Object> create(@RequestBody Clients client) {
+  public ResponseEntity<Object> create(@Valid @RequestBody Clients client) {
     Clients cl = clientsService.insert(client);
     return ResponseHandler.generateResponse(HttpStatus.CREATED, "Create client data success", cl);
   }
@@ -38,8 +41,10 @@ public class ClientsController {
   public ResponseEntity<Object> getAll(
     @RequestParam String searchTerm,
     @RequestParam(required = false) String sortBy, // Custom sorting parameter
-    Pageable pageable
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size
   ) {
+    Pageable pageable = PageRequest.of(page, size);
     MyPagination<Clients> cl = clientsService.getAll(searchTerm, new PaginationHelper().PaginationController(sortBy, pageable));
     return ResponseHandler.generateResponse(HttpStatus.OK, "GetAll client data success", cl);
   }

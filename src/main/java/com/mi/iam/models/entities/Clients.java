@@ -36,7 +36,7 @@ public class Clients {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-  @Column(length = 36, insertable = false, updatable = false, nullable = false)
+  @Column(length = 36, updatable = false, nullable = false)
   private String id;
 
   @NotBlank

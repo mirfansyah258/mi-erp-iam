@@ -12,7 +12,6 @@ import com.mi.iam.models.entities.ClientRoles;
 import com.mi.iam.models.repositories.ClientRolesRepository;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 @Service
 @Transactional
@@ -24,7 +23,7 @@ public class ClientRolesService {
     this.clientRolesRepository = clientRolesRepository;
   }
 
-  public ClientRoles insert(@Valid ClientRoles role) {
+  public ClientRoles insert(ClientRoles role) {
     return clientRolesRepository.save(role);
   }
 

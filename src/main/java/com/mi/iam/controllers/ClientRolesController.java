@@ -1,5 +1,7 @@
 package com.mi.iam.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,7 @@ public class ClientRolesController {
   private ClientRolesService clientRolesService;
 
   @PostMapping({"", "/"})
-  public ResponseEntity<Object> create(@RequestBody ClientRoles role) {
+  public ResponseEntity<Object> create(@Valid @RequestBody ClientRoles role) {
     ClientRoles cl = clientRolesService.insert(role);
     return ResponseHandler.generateResponse(HttpStatus.CREATED, "Create client role data success", cl);
   }

@@ -32,9 +32,10 @@ public class ClientRoles {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-  @Column(length = 36, insertable = false, updatable = false, nullable = false)
+  @Column(length = 36, updatable = false, nullable = false)
   private String id;
 
+  @NotBlank
   @Column(name = "client_id", length = 36, nullable = false)
   private String clientId;
 

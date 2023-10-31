@@ -3,6 +3,7 @@ package com.mi.iam.controllers;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,10 @@ public class ClientRolesController {
   public ResponseEntity<Object> getAll(
     @RequestParam String searchTerm,
     @RequestParam(required = false) String sortBy, // Custom sorting parameter
-    Pageable pageable
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size
   ) {
+    Pageable pageable = PageRequest.of(page, size);
     MyPagination<ClientRoles> cl = clientRolesService.getAll(searchTerm, new PaginationHelper().PaginationController(sortBy, pageable));
     return ResponseHandler.generateResponse(HttpStatus.OK, "GetAll client role data success", cl);
   }

@@ -113,7 +113,6 @@ public class ClientRolesTest {
   @Test
   public void getById_success() throws Exception {
     // Arrange: Create a sample client and retrieve its ID
-    // ClientRoles client = new ClientRoles(null, "test-1", "test-2", null, 1, null, LocalDateTime.now(), LocalDateTime.now(), null);
     ClientRoles clientRoles = new ClientRoles();
     // Set clientRoles properties here...
     // Create a UUID
@@ -126,14 +125,6 @@ public class ClientRolesTest {
     clientRoles.setName("test-2");
 
     Mockito.when(clientRolesService.insert(clientRoles)).thenReturn(clientRoles);
-
-    // Act: Insert the clientRoles using the service
-    // ClientRoles savedClient = clientRolesService.insert(clientRoles);
-
-    // Assertions.assertEquals(savedClient.getClientId(), clientRoles.getClientId());
-
-    // Mock the service method
-    // Mockito.when(clientRolesService.getById(clientRoles.getId())).thenReturn(clientRoles).thenThrow(new RuntimeException());
 
     // Assert: Send a GET request to retrieve the clientRoles by ID
     mockMvc.perform(

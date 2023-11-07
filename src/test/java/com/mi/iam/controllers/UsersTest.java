@@ -21,15 +21,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mi.iam.models.dto.MyPagination;
-import com.mi.iam.models.entities.Clients;
-import com.mi.iam.models.repositories.ClientsRepository;
-import com.mi.iam.services.ClientsService;
+import com.mi.iam.models.entities.Users;
+import com.mi.iam.models.repositories.UsersRepository;
+import com.mi.iam.services.UsersService;
 
 @SpringBootTest
-// @WebMvcTest(ClientsController.class)
+// @WebMvcTest(UsersController.class)
 @AutoConfigureMockMvc
-public class ClientsTest {
-  private static final Logger logger = LoggerFactory.getLogger(ClientsTest.class);
+public class UsersTest {
+  private static final Logger logger = LoggerFactory.getLogger(UsersTest.class);
   
   @Autowired
 	private MockMvc mockMvc;
@@ -38,66 +38,67 @@ public class ClientsTest {
   private ObjectMapper mapper;
 
   @MockBean
-  private ClientsService clientsService;
+  private UsersService usersService;
 
   @MockBean
-  private ClientsRepository clientsRepository;
+  private UsersRepository usersRepository;
 
   @InjectMocks
-  private ClientsController clientsController;
+  private UsersController usersController;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.mockMvc = MockMvcBuilders.standaloneSetup(clientsController).build();
+    this.mockMvc = MockMvcBuilders.standaloneSetup(usersController).build();
   }
 
   @Test
-  public void insertClients_success() throws Exception {
-    Clients newClient = new Clients();
-    newClient.setClientId("test-1");
-    newClient.setName("test-2");
-    newClient.setIsActive(1);
-
-    logger.info("ClientId" + newClient.getClientId());
+  public void insertUsers_success() throws Exception {
+    Users newUser = new Users();
+    String username = "username";
+    newUser.setUsername(username);
+    newUser.setEmail("email@mail.com");
+    newUser.setFirstname("first");
+    newUser.setLastname("last");
+    newUser.setPassword("password");
 
     // Mock the service method
-    Mockito.when(clientsService.insert(newClient)).thenReturn(newClient);
+    Mockito.when(usersService.insert(newUser)).thenReturn(newUser);
 
-    mockMvc.perform(post("/clients")
+    mockMvc.perform(post("/users")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(mapper.writeValueAsString(newClient)))
+        .content(mapper.writeValueAsString(newUser)))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.data.clientId").value("test-1"));
+        .andExpect(jsonPath("$.data.username").value(username));
   }
 
   @Test
-  public void testInsertClientWithBlankClientId() throws Exception {
-    // Create a Clients object with a blank clientId
-    Clients client = new Clients();
-    client.setClientId(""); // Blank clientId violates @NotBlank constraint
+  public void testInsertUserWithBlankUsername() throws Exception {
+    // Create a Users object with a blank username
+    Users user = new Users();
+    user.setUsername(""); // Blank username violates @NotBlank constraint
 
     // Perform a POST request to the insert endpoint
-    mockMvc.perform(post("/clients")
+    mockMvc.perform(post("/users")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(mapper.writeValueAsString(client)))
+        .content(mapper.writeValueAsString(user)))
         .andExpect(status().isBadRequest()); // Expect HTTP 400 Bad Request
   }
   
   @Test
   public void getAll_success() throws Exception {
-    // Create a list of Clients for testing
-    List<Clients> clientsList = new ArrayList<>();
-    clientsList.add(new Clients());
-    clientsList.add(new Clients());
+    // Create a list of Users for testing
+    List<Users> usersList = new ArrayList<>();
+    usersList.add(new Users());
+    usersList.add(new Users());
 
     // Mock the service method
-    Mockito.when(clientsService.getAll(Mockito.anyString(), Mockito.any())).thenReturn(new MyPagination<>(clientsList, clientsList.size(), 1, 1, clientsList.size()));
+    Mockito.when(usersService.getAll(Mockito.anyString(), Mockito.any())).thenReturn(new MyPagination<>(usersList, usersList.size(), 1, 1, usersList.size()));
 
     // Act & Assert
     mockMvc.perform(
-      get("/clients")
+      get("/users")
       .param("searchTerm", "")
       .param("page", "1") // Specify the page and size parameters
       .param("size", "10")
@@ -113,33 +114,34 @@ public class ClientsTest {
   
   @Test
   public void getById_success() throws Exception {
-    // Arrange: Create a sample client and retrieve its ID
-    // Clients client = new Clients(null, "test-1", "test-2", null, 1, null, LocalDateTime.now(), LocalDateTime.now(), null);
-    Clients client = new Clients();
-    // Set client properties here...
+    // Arrange: Create a sample user and retrieve its ID
+    // Users user = new Users(null, "test-1", "test-2", null, 1, null, LocalDateTime.now(), LocalDateTime.now(), null);
+    Users user = new Users();
+    // Set user properties here...
     // Create a UUID
     UUID uuid = UUID.randomUUID();
 
     // Convert UUID to String
     String uuidStr = uuid.toString();
-    client.setId(uuidStr);
-    client.setClientId("test-1");
-    client.setName("test-2");
-    client.setIsActive(1);
+    user.setId(uuidStr);
+    user.setUsername("username");
+    user.setEmail("email@mail.com");
+    user.setFirstname("first");
+    user.setLastname("last");
 
-    Mockito.when(clientsService.insert(client)).thenReturn(client);
+    Mockito.when(usersService.insert(user)).thenReturn(user);
 
-    // Act: Insert the client using the service
-    // Clients savedClient = clientsService.insert(client);
+    // Act: Insert the user using the service
+    // Users savedUser = usersService.insert(user);
 
-    // Assertions.assertEquals(savedClient.getClientId(), client.getClientId());
+    // Assertions.assertEquals(savedUser.getUsername(), user.getUsername());
 
     // Mock the service method
-    // Mockito.when(clientsService.getById(client.getId())).thenReturn(client).thenThrow(new RuntimeException());
+    // Mockito.when(usersService.getById(user.getId())).thenReturn(user).thenThrow(new RuntimeException());
 
-    // Assert: Send a GET request to retrieve the client by ID
+    // Assert: Send a GET request to retrieve the user by ID
     mockMvc.perform(
-      get("/clients/{id}", uuidStr)
+      get("/users/{id}", uuidStr)
       .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));

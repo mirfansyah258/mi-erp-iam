@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mi.iam.helpers.PaginationHelper;
 import com.mi.iam.helpers.ResponseHandler;
 import com.mi.iam.models.dto.MyPagination;
+import com.mi.iam.models.dto.UsersChangePassword;
 import com.mi.iam.models.entities.Users;
 import com.mi.iam.services.UsersService;
 
@@ -60,6 +61,12 @@ public class UsersController {
     user.setId(id);
     Users usr = usersService.update(user);
     return ResponseHandler.generateResponse(HttpStatus.OK, "Update user data success", usr);
+  }
+
+  @PutMapping("/change-password/{id}")
+  public ResponseEntity<Object> changePassword(@PathVariable("id") String id, @RequestBody UsersChangePassword pwd) throws Exception {
+    Users usr = usersService.changePassword(id, pwd);
+    return ResponseHandler.generateResponse(HttpStatus.OK, "Change password success", usr);
   }
 
   @PatchMapping("/{id}")

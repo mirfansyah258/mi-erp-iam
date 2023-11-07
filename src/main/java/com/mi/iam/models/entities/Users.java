@@ -62,13 +62,13 @@ public class Users {
   @Min(value = 0, message = "is_active must be at least 0")
   @Max(value = 1, message = "is_active cannot exceed 1")
   @Column(name = "is_active", length = 1, nullable = false)
-  private Integer isActive;
+  private Integer isActive = 1;
 
   @NotNull
   @Min(value = 0, message = "is_email_verified must be at least 0")
   @Max(value = 1, message = "is_email_verified cannot exceed 1")
   @Column(name = "is_email_verified", length = 1, nullable = false)
-  private Integer isEmailVerified;
+  private Integer isEmailVerified = 0;
 
   @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
   private LocalDateTime createdAt;
